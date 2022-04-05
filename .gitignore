@@ -30,6 +30,9 @@ build/
 ### VS Code ###
 .vscode/
 
-
 #logs
 /logs/
+
+
+/javaAgentTest/target/
+/javaAgent/target/

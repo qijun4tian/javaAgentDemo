@@ -13,9 +13,9 @@ import java.security.ProtectionDomain;
  */
 public class LogPrintTransformer implements ClassFileTransformer {
 
-    private String inputClassName;
+    private final String inputClassName;
 
-    private String methodName;
+    private final String methodName;
 
     public LogPrintTransformer(String inputClassName, String methodName) {
         this.inputClassName = inputClassName;
@@ -36,7 +36,9 @@ public class LogPrintTransformer implements ClassFileTransformer {
                 CtMethod[] ctMethods = ctClass.getDeclaredMethods();
                 for (CtMethod ctMethod : ctMethods) {
                     if (ctMethod.getName().equals(methodName)) {
-                        ctMethod.insertBefore(createJavaString(className, ctMethod));
+                        int length = ctMethod.getParameterTypes().length;
+                        ctMethod.insertBefore(createJavaString(className, ctMethod,length));
+                        break;
                     }
 
                 }
@@ -55,14 +57,22 @@ public class LogPrintTransformer implements ClassFileTransformer {
 
 
     //在javassist中$1代表方法的第一个参数,$2代表第二个参数以此类推可参考https://www.jianshu.com/p/b9b3ff0e1bf8
-    private String createJavaString(String className, CtMethod ctMethod){
-        StringBuilder stringBuilder=new StringBuilder();
-        stringBuilder.append("System.out.println($1);");
-        stringBuilder.append("System.out.println($2);" );
+    private String createJavaString(String className, CtMethod ctMethod, int length){
+        StringBuilder args = new StringBuilder();
+        for (int i = 0; i < length; i++) {
+            if(i== 0){
+                args.append("System.out.println(");
+            }
+            args.append("$").append(i+1);
+            if(i!= length - 1){
+                args.append("+\",\"+");
+            }else {
+                args.append(");");
+            }
+        }
 
-        return stringBuilder.toString();
+        return args.toString();
     }
-
 
 
 }

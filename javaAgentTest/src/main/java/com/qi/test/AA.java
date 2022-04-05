@@ -6,7 +6,7 @@ package com.qi.test;
  */
 public class AA {
 
-    public void sout(String i, String j){
+    public void sout(String i, String j,String k){
 
     }
     public void sout1(Integer i, Integer j){
